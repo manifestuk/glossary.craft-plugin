@@ -2,24 +2,31 @@
 
 class GlossaryVariable
 {
-    public function navigation($items, $groupField)
+    public function make($items, $groupField)
     {
-        $glossary = array_fill_keys(range('A', 'Z'), []);
+        return $this->buildGlossary($items, $groupField);
+    }
+
+    protected function buildGlossary($items, $groupField)
+    {
+        $glossary = [];
+        $groupedItems = array_fill_keys(range('A', 'Z'), []);
 
         foreach ($items as $item) {
             $fieldData = $item->$groupField;
 
             $fieldIndex = strtoupper(substr($fieldData, 0, 1));
 
-            $glossary[$fieldIndex][] = $item;
+            $groupedItems[$fieldIndex][] = $item;
         }
 
-        $return = [];
-
-        foreach ($glossary as $letter => $letterItems) {
-            $return[] = (object) ['label' => $letter, 'hasItems' => (bool) $letterItems];
+        foreach ($groupedItems as $index => $items) {
+            $glossary[] = new Glossary_LetterModel([
+                'label' => $index,
+                'items' => $items,
+            ]);
         }
 
-        return $return;
+        return $glossary;
     }
 }
