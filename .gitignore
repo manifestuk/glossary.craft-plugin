@@ -1,8 +1,2 @@
 # System:
 .DS_Store
-
-# Test coverage reports:
-tests/reports/
-
-# Third-party code:
-vendor/
