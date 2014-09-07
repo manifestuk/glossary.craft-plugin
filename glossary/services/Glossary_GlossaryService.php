@@ -7,33 +7,31 @@ class Glossary_GlossaryService extends BaseApplicationComponent
      * field.
      *
      * @param array|ElementCriteriaModel $items
-     * @param string $keyField
+     * @param string $field
      *
      * @return array
      */
-    public function buildAZ($items, $keyField)
+    public function buildAZ($items, $field)
     {
         $items  = $this->normalizeItems($items);
         $keys   = range('A', 'Z');
         $method = 'azKeyCallback';
 
         return $this->buildGlossary(
-            $this->groupGlossaryItems($items, $keys, $keyField, $method)
+            $this->groupGlossaryItems($items, $keys, $field, $method)
         );
     }
 
     /**
      * Returns the first letter of the given string, converted to uppercase.
      *
-     * @param string $fieldData
+     * @param string $value
      *
      * @return string
      */
-    protected function azKeyCallback($fieldData)
+    protected function azKeyCallback($value)
     {
-        return is_string($fieldData)
-            ? strtoupper(substr($fieldData, 0, 1))
-            : '';
+        return is_string($value) ? strtoupper(substr($value, 0, 1)) : '';
     }
 
     /**
@@ -41,17 +39,17 @@ class Glossary_GlossaryService extends BaseApplicationComponent
      * grouped by the specified field.
      *
      * @param array|ElementCriteriaModel $items
-     * @param string $keyField
+     * @param string $field
      * @param array $keys
      *
      * @return array
      */
-    public function buildCustom($items, $keyField, Array $keys)
+    public function buildCustom($items, $field, Array $keys)
     {
         $items = $this->normalizeItems($items);
 
         return $this->buildGlossary(
-            $this->groupGlossaryItems($items, $keys, $keyField)
+            $this->groupGlossaryItems($items, $keys, $field)
         );
     }
 
@@ -81,25 +79,25 @@ class Glossary_GlossaryService extends BaseApplicationComponent
      *
      * @param Array $items
      * @param Array $keys
-     * @param mixed $keyField
-     * @param string $keyCallback
+     * @param mixed $field
+     * @param string $callback
      *
      * @return array
      */
     protected function groupGlossaryItems(
         Array $items,
         Array $keys,
-        $keyField,
-        $keyCallback = ''
+        $field,
+        $callback = ''
     ) {
         $groups = array_fill_keys($keys, []);
 
         foreach ($items as $item) {
-            if ( ! $this->validatePropertyExists($item, $keyField)) {
+            if ( ! $this->validatePropertyExists($item, $field)) {
                 continue;
             }
 
-            $key = $this->getItemKey($item, $keyField, $keyCallback);
+            $key = $this->getItemKey($item, $field, $callback);
 
             if ( ! $this->validateKeyExists($key, $keys)) {
                 continue;
@@ -152,15 +150,15 @@ class Glossary_GlossaryService extends BaseApplicationComponent
      * Validates that the specified key exists in the given array. Logs a
      * warning if it does not.
      *
-     * @param string $key
-     * @param array $allKeys
+     * @param string $needle
+     * @param array $haystack
      *
      * @return bool
      */
-    protected function validateKeyExists($key, Array $allKeys)
+    protected function validateKeyExists($needle, Array $haystack)
     {
-        if ( ! in_array($key, $allKeys)) {
-            $message = "Ignoring item with unknown key '${key}'.";
+        if ( ! in_array($needle, $haystack)) {
+            $message = "Ignoring item with unknown key '${needle}'.";
 
             $this->logWarning($message);
 
@@ -174,7 +172,7 @@ class Glossary_GlossaryService extends BaseApplicationComponent
      * Returns an array of Glossary_KeyModels, constructed from the grouped
      * items.
      *
-     * @param array $groupedItems
+     * @param array $items
      *
      * @return array
      */
@@ -192,6 +190,13 @@ class Glossary_GlossaryService extends BaseApplicationComponent
         return $glossary;
     }
 
+    /**
+     * Writes a warning message to the plugin-specific log.
+     *
+     * @param string $message
+     *
+     * @return void
+     */
     protected function logWarning($message)
     {
         GlossaryPlugin::log($message, LogLevel::Warning);
