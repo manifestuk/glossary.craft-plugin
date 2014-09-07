@@ -3,15 +3,31 @@
 class GlossaryVariable
 {
     /**
-     * Builds a glossary of the given items, grouped by the specified field.
+     * Builds an A-Z glossary of the given items, grouped by the specified
+     * field.
      *
      * @param array|ElementCriteriaModel $items
-     * @param string $groupField
+     * @param string $field
      *
      * @return array
      */
-    public function build($items, $groupField)
+    public function buildAZ($items, $field)
     {
-        return craft()->glossary_glossary->buildGlossary($items, $groupField);
+        return craft()->glossary_glossary->buildAZ($items, $field);
+    }
+
+    /**
+     * Builds a custom glossary of the given items, grouped by the specified
+     * field.
+     *
+     * @param array|ElementCriteriaModel $items
+     * @param string $field
+     * @param array $keys
+     *
+     * @return array
+     */
+    public function buildCustom($items, $field, Array $keys)
+    {
+        return craft()->glossary_glossary->buildCustom($items, $field, $keys);
     }
 }
