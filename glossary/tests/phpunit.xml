@@ -12,6 +12,7 @@
   <testsuites>
     <testsuite name="GlossaryTests">
       <directory>models</directory>
+      <directory>services</directory>
     </testsuite>
   </testsuites>
 
@@ -24,15 +25,12 @@
 
   <filter>
     <blacklist>
+      <directory suffix=".php">../libraries</directory>
       <directory suffix=".php">bin</directory>
       <directory suffix=".php">vendor</directory>
+      <directory suffix=".php">mocks</directory>
+      <directory suffix=".php">assets</directory>
       <directory suffix=".php">report</directory>
     </blacklist>
   </filter>
-
-  <logging>
-    <log type="coverage-html" target="reports/coverage" charset="UTF-8" yui="true" highlight="false" lowUpperBound="35" highLowerBound="70" />
-    <log type="testdox-html" target="reports/testdox.html" />
-    <log type="testdox-text" target="reports/testdox.txt" />
-  </logging>
 </phpunit>
